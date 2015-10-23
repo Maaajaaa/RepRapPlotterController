@@ -53,8 +53,22 @@ private slots:
 
     void on_geoShape_comboBox_currentIndexChanged(int index);
 
+    void on_plot_pushButton_clicked();
+
+    void on_clearPreview_pushButton_clicked();
+
+    void on_undo_pushButton_clicked();
+
+    void on_up_pushButton_clicked();
+
+    void on_down_pushButton_clicked();
+
 private:
+    bool plotted;
     QGraphicsScene *scene;
+    QList<int> geoShapeHistory;
+    QList<QString> commandsList;
+    int groupIndex;
     qreal sceneScale, xMaximum, yMaximum;
     Ui::MainWindow *ui;
     QSerialPort *serial;

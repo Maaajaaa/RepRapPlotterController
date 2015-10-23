@@ -470,6 +470,47 @@ QGroupBox::title {
                 </property>
                </widget>
               </item>
+              <item row="1" column="2">
+               <widget class="QPushButton" name="up_pushButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>20</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>⭡</string>
+                </property>
+                <property name="flat">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="3">
+               <widget class="QPushButton" name="down_pushButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>20</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>⭣</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </widget>
            </item>
@@ -493,19 +534,6 @@ QGroupBox::title {
              </property>
             </widget>
            </item>
-           <item row="3" column="2">
-            <widget class="QPushButton" name="moveX_pushButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>X</string>
-             </property>
-            </widget>
-           </item>
            <item row="3" column="3">
             <widget class="QPushButton" name="moveY_pushButton">
              <property name="sizePolicy">
@@ -515,7 +543,7 @@ QGroupBox::title {
               </sizepolicy>
              </property>
              <property name="text">
-              <string>Y</string>
+              <string>Y ⬍</string>
              </property>
             </widget>
            </item>
@@ -549,6 +577,19 @@ QGroupBox::title {
                </widget>
               </item>
              </layout>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QPushButton" name="moveX_pushButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>X ⬌</string>
+             </property>
             </widget>
            </item>
           </layout>
@@ -615,6 +656,23 @@ QGroupBox::title {
            <string>Add geometric shapes</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_11">
+           <item row="3" column="3">
+            <widget class="QSpinBox" name="yVal_spinBox">
+             <property name="maximum">
+              <number>14228</number>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QSpinBox" name="xVal_spinBox">
+             <property name="maximum">
+              <number>9960</number>
+             </property>
+             <property name="displayIntegerBase">
+              <number>10</number>
+             </property>
+            </widget>
+           </item>
            <item row="3" column="2">
             <widget class="QLabel" name="label_4">
              <property name="text">
@@ -652,10 +710,27 @@ QGroupBox::title {
              </property>
             </widget>
            </item>
-           <item row="6" column="0" colspan="4">
-            <widget class="QPushButton" name="preview_pushButton">
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_5">
              <property name="text">
-              <string>preview</string>
+              <string>lenght: </string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="2">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>unit:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" colspan="2">
+            <widget class="QRadioButton" name="firstSetting_radioButton">
+             <property name="text">
+              <string>|</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -663,17 +738,17 @@ QGroupBox::title {
             <widget class="QComboBox" name="geoShape_comboBox">
              <item>
               <property name="text">
-               <string>Line</string>
+               <string>| ― Line</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Diagonal</string>
+               <string>⧸  ⧹ Diagonal</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Square</string>
+               <string>⬜ Square</string>
               </property>
              </item>
              <item>
@@ -688,34 +763,17 @@ QGroupBox::title {
              </item>
             </widget>
            </item>
-           <item row="3" column="3">
-            <widget class="QSpinBox" name="yVal_spinBox">
-             <property name="maximum">
-              <number>14228</number>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QSpinBox" name="xVal_spinBox">
-             <property name="maximum">
-              <number>9960</number>
-             </property>
-             <property name="displayIntegerBase">
-              <number>10</number>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label_5">
+           <item row="6" column="2" colspan="2">
+            <widget class="QPushButton" name="plot_pushButton">
              <property name="text">
-              <string>lenght: </string>
+              <string>plot</string>
              </property>
             </widget>
            </item>
-           <item row="4" column="2">
-            <widget class="QLabel" name="label_6">
+           <item row="6" column="0" colspan="2">
+            <widget class="QPushButton" name="preview_pushButton">
              <property name="text">
-              <string>unit:</string>
+              <string>preview</string>
              </property>
             </widget>
            </item>
@@ -757,17 +815,28 @@ QGroupBox::title {
            <item row="2" column="2" colspan="2">
             <widget class="QRadioButton" name="seconSetting_radioButton">
              <property name="text">
-              <string>horizontal</string>
+              <string>―</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="0" colspan="2">
-            <widget class="QRadioButton" name="firstSetting_radioButton">
+           <item row="7" column="0">
+            <widget class="QPushButton" name="undo_pushButton">
              <property name="text">
-              <string>vertical</string>
+              <string>undo</string>
              </property>
-             <property name="checked">
-              <bool>true</bool>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QPushButton" name="redo_pushButton">
+             <property name="text">
+              <string>redo</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="2" colspan="2">
+            <widget class="QPushButton" name="clearPreview_pushButton">
+             <property name="text">
+              <string>clear preview</string>
              </property>
             </widget>
            </item>

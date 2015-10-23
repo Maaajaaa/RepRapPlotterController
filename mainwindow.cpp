@@ -8,7 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow){
 
     ui->setupUi(this);
-
+    plotted = false;
+    groupIndex = 0;
     scene = new QGraphicsScene(this);
     ui->preview_graphicsView->setSceneRect(0, 0, 9962, 14230);
     xMaximum = 9960;
@@ -19,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->preview_graphicsView->setScene(scene);
     QPen rectPen;
     rectPen.setColor(Qt::blue);
+    rectPen.setStyle(Qt::DotLine);
     ///TODO: correct SceneRect
     if(ui->preview_graphicsView->width() / 9962.0 <= ui->preview_graphicsView->height() / 14230.0 )  //narrow view like 9:16
     {
@@ -241,54 +243,75 @@ void MainWindow::on_preview_pushButton_clicked()
   qreal xVal = ui->xVal_spinBox->value() + 1;
   qreal yVal = yMaximum - (ui->yVal_spinBox->value() + 1);
 
-  QPen pen1;
-  pen1.setWidth(1 / sceneScale);
+  QPen DashLinePen, SolidLinePen;
+  DashLinePen.setWidth(1 / sceneScale);
+  SolidLinePen.setWidth(1 / sceneScale);
+  DashLinePen.setStyle(Qt::DashLine);
+  SolidLinePen.setStyle(Qt::SolidLine);
 
-  //remember: switch + and - for yAxis bcs. y0 is on top
-
+  ///remember: switch + and - for yAxis bcs. y0 is on top
   if(ui->geoShape_comboBox->currentIndex() == 0) //line
   {
+    geoShapeHistory.append(0);
     if(ui->firstSetting_radioButton->isChecked()) //vertical
     {
-      scene->addLine(xVal, yVal, xVal, yVal - lenght, pen1);
+      commandsList.append(QString("moveY(" + QString::number(lenght) + ")"));
+      scene->addLine(xVal, yVal, xVal, yVal - lenght, DashLinePen);
+      scene->addLine(xVal, yVal, xVal, yVal - lenght, SolidLinePen)->setVisible(false);
     }
     else  //horizontal
     {
-      scene->addLine(xVal, yVal, xVal + lenght, yVal, pen1);
+      commandsList.append(QString("moveX(" + QString::number(lenght) + ")"));
+      scene->addLine(xVal, yVal, xVal + lenght, yVal, DashLinePen);
+      scene->addLine(xVal, yVal, xVal + lenght, yVal, SolidLinePen)->setVisible(false);
     }
   }
 
   if(ui->geoShape_comboBox->currentIndex() == 1) //diagonal
   {
+    geoShapeHistory.append(1);
+    qDebug() << commandsList;
     qreal diagonalLenght =  sqrt(lenght * lenght);
     if(ui->firstSetting_radioButton->isChecked()) //like f(x) = x
     {
-      scene->addLine(xVal, yVal, xVal + diagonalLenght, yVal - diagonalLenght, pen1);
+      scene->addLine(xVal, yVal, xVal + diagonalLenght, yVal - diagonalLenght, DashLinePen);
+      scene->addLine(xVal, yVal, xVal + diagonalLenght, yVal - diagonalLenght, SolidLinePen)->setVisible(false);
     }
     else //like f(x) = -x
     {
-      scene->addLine(xVal, yVal, xVal + diagonalLenght, yVal + diagonalLenght, pen1);
+      scene->addLine(xVal, yVal, xVal + diagonalLenght, yVal + diagonalLenght, DashLinePen);
+      scene->addLine(xVal, yVal, xVal + diagonalLenght, yVal - diagonalLenght, SolidLinePen)->setVisible(false);
     }
 
   }
 
   if(ui->geoShape_comboBox->currentIndex() == 2) //square
   {
-
-    scene->addRect(xVal, yVal - lenght, lenght, lenght, pen1);
+    geoShapeHistory.append(2);
+    commandsList.append(QString("square(" + QString::number(lenght) + ")"));
+    qDebug() << commandsList;
+    scene->addRect(xVal, yVal - lenght, lenght, lenght, DashLinePen);
+    scene->addRect(xVal, yVal - lenght, lenght, lenght, SolidLinePen)->setVisible(false);
   }
 
   if(ui->geoShape_comboBox->currentIndex() == 3) //nicholas house
   {
+    geoShapeHistory.append(3);
     QPoint peakPoint;
     peakPoint.setX(xVal + 0.5 * lenght);
-    peakPoint.setY(yVal);
+    peakPoint.setY(yVal - 1.5 * lenght);
 
-    scene->addRect(xVal, yVal - 0.5 * lenght, lenght, lenght, pen1);
-    scene->addLine(xVal, yVal - 0.5 * lenght, peakPoint.x(),  peakPoint.y(), pen1);         //roof 1
-    scene->addLine(peakPoint.x(), peakPoint.y(), xVal + lenght, yVal - 0.5 * lenght, pen1); //roof 2
-    scene->addLine(xVal, yVal - 0.5 * lenght, xVal + lenght, yVal - 1.5 * lenght, pen1);  //first diagonal
-    scene->addLine(xVal, yVal - 1.5 * lenght, xVal + lenght, yVal - 0.5 * lenght, pen1);  //2nd diagonal
+    scene->addRect(xVal, yVal - lenght, lenght, lenght, DashLinePen);                           //main
+    scene->addLine(xVal, yVal - lenght, peakPoint.x(),  peakPoint.y(), DashLinePen);            //roof 1
+    scene->addLine(peakPoint.x(), peakPoint.y(), xVal + lenght, yVal - lenght, DashLinePen);    //roof 2
+    scene->addLine(xVal, yVal, xVal + lenght, yVal - lenght, DashLinePen);                      //first diagonal
+    scene->addLine(xVal, yVal - lenght, xVal + lenght, yVal, DashLinePen);                      //2nd diagonal
+
+    scene->addRect(xVal, yVal - lenght, lenght, lenght, SolidLinePen)->setVisible(false);                          //main
+    scene->addLine(xVal, yVal - lenght, peakPoint.x(),  peakPoint.y(), SolidLinePen)->setVisible(false);           //roof 1
+    scene->addLine(peakPoint.x(), peakPoint.y(), xVal + lenght, yVal - lenght, SolidLinePen)->setVisible(false);   //roof 2
+    scene->addLine(xVal, yVal, xVal + lenght, yVal - lenght, SolidLinePen)->setVisible(false);                     //first diagonal
+    scene->addLine(xVal, yVal - lenght, xVal + lenght, yVal, SolidLinePen)->setVisible(false);                     //2nd diagonal
   }
 }
 
@@ -301,8 +324,8 @@ void MainWindow::on_geoShape_comboBox_currentIndexChanged(int index)
         ui->lenght_spinBox->setMaximum(ui->yVal_spinBox->maximum());
         ui->firstSetting_radioButton->setVisible(true);
         ui->seconSetting_radioButton->setVisible(true);
-        ui->firstSetting_radioButton->setText("vertical");
-        ui->seconSetting_radioButton->setText("horizontal");
+        ui->firstSetting_radioButton->setText("|");
+        ui->seconSetting_radioButton->setText("―");
       break;
 
       case 1:
@@ -310,8 +333,8 @@ void MainWindow::on_geoShape_comboBox_currentIndexChanged(int index)
         ui->lenght_spinBox->setMaximum(ui->yVal_spinBox->maximum());
         ui->firstSetting_radioButton->setVisible(true);
         ui->seconSetting_radioButton->setVisible(true);
-        ui->firstSetting_radioButton->setText("like f(x)=x");
-        ui->seconSetting_radioButton->setText("like f(x)=-x");
+        ui->firstSetting_radioButton->setText("⭧");
+        ui->seconSetting_radioButton->setText("⭨");
       break;
 
       case 2:
@@ -325,5 +348,83 @@ void MainWindow::on_geoShape_comboBox_currentIndexChanged(int index)
         ui->firstSetting_radioButton->setVisible(false);
         ui->seconSetting_radioButton->setVisible(false);
       break;
+    }
+}
+
+void MainWindow::on_plot_pushButton_clicked()
+{
+    //qDebug() << scene->items().length();
+    if(scene->items().length() > 1)
+    {
+        if(geoShapeHistory.last() == 3)
+        {
+            scene->items().first()->setVisible(true);
+            scene->items().at(1)->setVisible(true);
+            scene->items().at(2)->setVisible(true);
+            scene->items().at(3)->setVisible(true);
+            scene->items().at(4)->setVisible(true);
+
+            scene->items().at(5)->setVisible(false);
+            scene->items().at(6)->setVisible(false);
+            scene->items().at(7)->setVisible(false);
+            scene->items().at(8)->setVisible(false);
+            scene->items().at(9)->setVisible(false);
+        }
+        else
+        {
+            scene->items().first()->setVisible(true);
+            scene->items().at(1)->setVisible(false);
+        }
+
+
+    }
+    if(serial->isOpen())
+    {
+        serial->write(commandsList.last().toLatin1());
+    }
+    plotted = true;
+}
+
+void MainWindow::on_clearPreview_pushButton_clicked()
+{
+    //clear all items but not the frame
+    QList<QGraphicsItem*> itemsList = scene->items();
+    for(int i=0; i < itemsList.length() -1; i++)
+    {
+        scene->removeItem(itemsList.at(i));
+    }
+
+}
+
+void MainWindow::on_undo_pushButton_clicked()
+{
+    if(!plotted)
+    {
+        QList<QGraphicsItem*> itemsList = scene->items();
+        if(itemsList.length() > 1)
+        {
+            //undoList->append(itemsList.at(0));
+            scene->removeItem(itemsList.first());
+        }
+        commandsList.removeLast();
+    } else
+    {
+        QMessageBox::information(this,"Action not executeable","You can only undo preview not plot!");
+    }
+}
+
+void MainWindow::on_up_pushButton_clicked()
+{
+    if(serial->isOpen())
+    {
+        serial->write("up()");
+    }
+}
+
+void MainWindow::on_down_pushButton_clicked()
+{
+    if(serial->isOpen())
+    {
+        serial->write("down()");
     }
 }
